@@ -11,12 +11,14 @@ export default {
 
 <template>
   <div v-if="borderRadius.length">
-    <h2 class="text-xl mt-8 mb-8">Border Radius</h2>
-    <div class="flex flex-wrap">
+    <h2 :id="this.$options.name" class="text-xl mt-8 mb-4">Border Radius</h2>
+    <hr class="mb-4" />
+    <div class="font-mono text-gray-700 mb-6">.border-{angle}</div>
+    <div class="flex flex-wrap -mx-4 overflow-x-hidden">
       <div
         v-for="(border , idx) in borderRadius"
         :key="idx"
-        class="pr-8 mb-4 w-1/2 sm:w-1/4 md:w-1/6 xl:w-1/12"
+        class="px-4 overflow-x-hidden mb-4 w-1/2 sm:w-1/4 md:w-1/6 xl:w-1/12 xl:flex-grow"
         @click="$emit('toggleDemoClass', border)"
       >
         <div
@@ -24,7 +26,8 @@ export default {
           :class="[border.class_prefix == 'rounded' ? 'border-4' : ('border-' + border.className.substr(8, 1) + '-4'), border.className]"
         ></div>
         <div class="class-text text-center">
-          <span class="text-black">.{{ border.className }}</span>
+          <span v-if="!border.class_suffix">&nbsp; (defaut)</span>
+          <span v-else>{{ border.class_suffix }} ({{ border.value }})</span>
         </div>
       </div>
     </div>

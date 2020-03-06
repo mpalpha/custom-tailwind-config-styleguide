@@ -1,23 +1,26 @@
 <template>
   <div id="app">
-    <demoPanel ref="demoPanel"></demoPanel>
-    <h1 class="text-3xl">Tailwind Style Guide v{{ this.package.version }}</h1>
-    <backgroundColors :backgroundColors="backgroundColors" @toggleDemoClass="toggleDemoClass"></backgroundColors>
-    <textColors :textColors="textColors" @toggleDemoClass="toggleDemoClass"></textColors>
-    <textSizes :textSizes="textSizes" @toggleDemoClass="toggleDemoClass"></textSizes>
-    <fontWeights :fontWeights="fontWeights" @toggleDemoClass="toggleDemoClass"></fontWeights>
-    <paddings :paddings="paddings" @toggleDemoClass="toggleDemoClass"></paddings>
-    <margins :margins="margins" @toggleDemoClass="toggleDemoClass"></margins>
-    <leadings :leadings="leadings" @toggleDemoClass="toggleDemoClass"></leadings>
-    <trackings :trackings="trackings" @toggleDemoClass="toggleDemoClass"></trackings>
-    <borderWidths :borderWidths="borderWidths" @toggleDemoClass="toggleDemoClass"></borderWidths>
-    <borderColors :borderColors="borderColors" @toggleDemoClass="toggleDemoClass"></borderColors>
-    <borderRadius :borderRadius="borderRadius" @toggleDemoClass="toggleDemoClass"></borderRadius>
-    <percentageWidths :percentageWidths="percentageWidths"></percentageWidths>
-    <otherWidths :otherWidths="otherWidths"></otherWidths>
-    <heights :heights="heights" @toggleDemoClass="toggleDemoClass"></heights>
-    <shadows :shadows="shadows" @toggleDemoClass="toggleDemoClass"></shadows>
-    <opacities :opacities="opacities" @toggleDemoClass="toggleDemoClass"></opacities>
+    <div class="container mx-auto overflow-x-hidden">
+      <demoPanel ref="demoPanel"></demoPanel>
+      <h1 class="text-3xl">Tailwind Style Guide v{{ this.package.version }}</h1>
+      <modulesEnabled :config="config" :theme="theme" :activeModules="activeModules"></modulesEnabled>
+      <backgroundColors :backgroundColors="backgroundColors" @toggleDemoClass="toggleDemoClass"></backgroundColors>
+      <textColors :textColors="textColors" @toggleDemoClass="toggleDemoClass"></textColors>
+      <textSizes :textSizes="textSizes" @toggleDemoClass="toggleDemoClass"></textSizes>
+      <fontWeights :fontWeights="fontWeights" @toggleDemoClass="toggleDemoClass"></fontWeights>
+      <paddings :paddings="paddings" @toggleDemoClass="toggleDemoClass"></paddings>
+      <margins :margins="margins" @toggleDemoClass="toggleDemoClass"></margins>
+      <leadings :leadings="leadings" @toggleDemoClass="toggleDemoClass"></leadings>
+      <trackings :trackings="trackings" @toggleDemoClass="toggleDemoClass"></trackings>
+      <borderWidths :borderWidths="borderWidths" @toggleDemoClass="toggleDemoClass"></borderWidths>
+      <borderColors :borderColors="borderColors" @toggleDemoClass="toggleDemoClass"></borderColors>
+      <borderRadius :borderRadius="borderRadius" @toggleDemoClass="toggleDemoClass"></borderRadius>
+      <percentageWidths :percentageWidths="percentageWidths"></percentageWidths>
+      <otherWidths :otherWidths="otherWidths"></otherWidths>
+      <heights :heights="heights" @toggleDemoClass="toggleDemoClass"></heights>
+      <opacities :opacities="opacities" @toggleDemoClass="toggleDemoClass"></opacities>
+      <shadows :shadows="shadows" @toggleDemoClass="toggleDemoClass"></shadows>
+    </div>
   </div>
 </template>
 
@@ -39,6 +42,7 @@ import TextColors from "./components/TextColors.vue";
 import TextSizes from "./components/TextSizes.vue";
 import Trackings from "./components/Trackings.vue";
 import DemoPanel from "./components/DemoPanel.vue";
+import ModulesEnabled from "./components/ModulesEnabled.vue";
 
 import resolveConfig from "tailwindcss/resolveConfig";
 import pkg from "../package.json";
@@ -62,21 +66,29 @@ export default {
     textColors: TextColors,
     textSizes: TextSizes,
     trackings: Trackings,
-    demoPanel: DemoPanel
+    demoPanel: DemoPanel,
+    modulesEnabled: ModulesEnabled
   },
+
   data: function() {
     var data = {
       package: pkg,
-      config: {}
+      config: {},
+      theme: {}
     };
 
     return data;
   },
+
   mounted: function() {
-    let tailwindTheme = resolveConfig(require("../tailwind.config")).theme;
+    let tailwindConfig = resolveConfig(require("../tailwind.config"));
+    this.config = tailwindConfig;
+
+    let tailwindTheme = tailwindConfig.theme;
+
     // tailwind migration to v1.2.0
-    this.config = {
-      ...tailwindTheme,
+    this.theme = {
+      ...this.config.theme,
       ...{
         backgroundColors: this.flattenObject(tailwindTheme.colors),
         borderColors: this.flattenObject(tailwindTheme.colors),
@@ -117,12 +129,12 @@ export default {
       ),
 
     getClasses: function(type, pre) {
-      if (!this.config[type]) {
+      if (!this.theme[type]) {
         return [];
       }
 
       var classes = [];
-      var configClasses = this.config[type];
+      var configClasses = this.theme[type];
 
       for (var classSuffix in configClasses) {
         var value = configClasses[classSuffix];
@@ -148,10 +160,6 @@ export default {
       return classes;
     },
 
-    isModuleEnabled: function(type) {
-      return this.config.modules && this.config.modules[type] !== false;
-    },
-
     chunk: function(array, number) {
       var i,
         j,
@@ -170,6 +178,15 @@ export default {
   },
 
   computed: {
+    activeModules: function() {
+      return Object.fromEntries(
+        Object.entries(this.$options.components).filter(
+          ([key, value]) =>
+            !!value.props && key == Object.getOwnPropertyNames(value.props)[0]
+        )
+      );
+    },
+
     borderWidths: function() {
       return this.getClasses("borderWidths", "border");
       // .concat(this.getClasses('borderWidths', 'border-l'))

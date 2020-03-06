@@ -32,26 +32,26 @@ export default {
 <template>
   <div v-if="backgroundColors.length">
     <div class="flex justify-between mt-8 mb-4">
-      <h2 class="text-xl">Background Colors</h2>
+      <h2 :id="this.$options.name" class="text-xl">Background Colors</h2>
     </div>
 
     <hr class="mb-4" />
-    <div class="font-mono text-gray-700 mb-6">.bg-{size}</div>
+    <div class="font-mono text-gray-700 mb-6">.bg-{color}</div>
     <div
       v-for="(backgrounds, _idx) in splitColors(backgroundColors)"
       :key="_idx"
-      class="flex flex-wrap"
+      class="flex flex-wrap -mx-4 overflow-hidden"
     >
       <div
         v-for="(bg, idx) in backgrounds"
         :key="idx"
-        class="pr-8 mb-4 w-1/2 sm:w-1/4 md:w-1/6 xl:w-1/12"
+        class="px-4 overflow-x-hidden mb-4 w-1/2 sm:w-1/3 xl:w-auto xl:flex-grow"
         :class="[itemContains(bg.className,'100')? 'flex-wrap':'']"
         @click="$emit('toggleDemoClass', bg)"
       >
         <div class="border border-gray-400 w-full h-8" :class="[`${bg.className}`]"></div>
-        <div class="class-text text-center">
-          <div class="text-black">.{{ bg.className }}</div>
+        <div class="">
+          <div class="text-black">{{ bg.class_suffix }}</div>
           <div class="text-gray font-mono">{{ bg.value }}</div>
         </div>
       </div>

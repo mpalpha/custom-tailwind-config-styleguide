@@ -27,23 +27,23 @@ export default {
 
 <template>
   <div v-if="borderColors.length">
-    <h2 class="text-xl mt-8 mb-4">Borders Colors</h2>
+    <h2 :id="this.$options.name" class="text-xl mt-8 mb-4">Borders Colors</h2>
     <hr class="mb-4" />
     <div class="font-mono text-gray-700 mb-6">.border-{color}</div>
     <div
       v-for="(colors, _idx) in splitColors(borderColors)"
       :key="_idx"
-      class="flex flex-wrap"
+      class="flex flex-wrap -mx-4 overflow-x-hidden"
     >
       <div
         v-for="(border, idx) in colors"
         :key="idx"
-        class="pr-8 mb-4 w-1/2 sm:w-1/4 md:w-1/6 xl:w-1/12"
+        class="px-4 overflow-x-hidden mb-4 w-1/2 sm:w-1/3 md:w-2/6 xl:w-auto xl:flex-grow"
         @click="$emit('toggleDemoClass', border)"
       >
         <div class="bg-gray-400 border-4 h-8" :class="[border.className]"></div>
-        <div class="class-text text-center">
-          <span class="text-black">.{{ border.className }}</span>
+        <div class="">
+          <span class="text-black">{{ border.class_suffix }}</span>
         </div>
       </div>
     </div>

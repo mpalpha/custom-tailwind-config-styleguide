@@ -1,5 +1,6 @@
 <script>
 export default {
+  name: "demoPanel",
   data: function() {
     var data = {
       demoClasses: []

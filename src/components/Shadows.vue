@@ -11,18 +11,20 @@ export default {
 
 <template>
   <div v-if="shadows.length">
-    <h2 class="text-xl mt-8 mb-4">Shadows</h2>
-    <hr class="mb-4"><div class="font-mono text-gray-700 mb-6">.shadow-{size}</div>
-    <div class="flex flex-wrap">
+    <h2 :id="this.$options.name" class="text-xl mt-8 mb-4">Shadows</h2>
+    <hr class="mb-4" />
+    <div class="font-mono text-gray-700 mb-6">.shadow-{type}</div>
+    <div class="flex flex-wrap -mx-4 overflow-x-hidden">
       <div
         v-for="(shadow , idx) in shadows"
         :key="idx"
-        class="pr-4 mb-4 w-1/2 sm:w-1/4 md:w-1/6"
+        class="pr-4 mb-1 w-1/2 sm:w-1/4 md:w-1/6"
         @click="$emit('toggleDemoClass', shadow)"
       >
-        <div :class="[shadow.className]" style="width: 100px; height: 100px;"></div>
-        <div class="class-text text-center" style="width: 100px">
-          <span class="text-black">.{{ shadow.className }}</span>
+        <div class="px-4 pb-4 overflow-x-hidden text-center">
+          <div class="mx-auto my-2 w-16 h-16" :class="[shadow.className]"></div>
+          <span v-if="shadow.class_suffix">{{ shadow.class_suffix }}</span>
+          <span v-else>(default)</span>
         </div>
       </div>
     </div>
